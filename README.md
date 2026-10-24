@@ -1,104 +1,81 @@
-# InfoÁgua 💧
+# InfoÁgua
 
-O **InfoÁgua** é uma plataforma móvel para o monitoramento colaborativo do abastecimento e da qualidade da água, integrada com previsões climáticas locais. O projeto foi desenvolvido como parte da disciplina de Desenvolvimento de Dispositivos Móveis (DDM).
+Monitoramento colaborativo do abastecimento e da qualidade da água, com previsão do tempo local.
 
-Este é um monorepo que contém toda a infraestrutura, o serviço de backend e o aplicativo mobile.
+<!-- ![InfoÁgua](docs/screenshot.png) -->
 
----
+Os moradores relatam no mapa quando falta água, quando o abastecimento volta, vazamentos e problemas de qualidade. Os outros usuários acompanham, curtem e comentam as ocorrências.
 
-## 📁 Estrutura do Repositório
+Projeto da disciplina de **Desenvolvimento de Dispositivos Móveis** (DDM) — IFRN.
 
-O projeto é dividido em três diretórios principais:
+## Funcionalidades
 
-*   **`/infra`:** Configurações do ambiente com Docker Compose, contendo os serviços de banco de dados (PostgreSQL) e armazenamento de arquivos compatível com S3 (MinIO).
-*   **`/backend`:** API RESTful desenvolvida com **NestJS**.
-*   **`/mobile`:** Aplicativo mobile multiplataforma desenvolvido com **React Native** e **Expo**.
+- **Relatar ocorrência** com tipo, descrição, foto e localização: falta d'água, retorno do abastecimento, vazamento ou problema de qualidade
+- **Mapa** com as ocorrências e filtro por tipo
+- **Histórico** com as ocorrências que você relatou
+- **Curtidas e comentários** em cada ocorrência
+- **Clima** da localização atual via OpenWeather
+- **Conta de usuário** com cadastro, login (JWT) e perfil público
+- **API documentada** com Swagger
 
----
+## Stack
 
-## 🚀 Como Iniciar o Projeto
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white&style=for-the-badge) ![NestJS](https://img.shields.io/badge/NestJS-E0234E?logo=nestjs&logoColor=white&style=for-the-badge) ![Prisma](https://img.shields.io/badge/Prisma-2D3748?logo=prisma&logoColor=white&style=for-the-badge) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white&style=for-the-badge) ![MinIO](https://img.shields.io/badge/MinIO-C72E49?logo=minio&logoColor=white&style=for-the-badge) ![React Native](https://img.shields.io/badge/React_Native-20232A?logo=react&logoColor=61DAFB&style=for-the-badge) ![Expo](https://img.shields.io/badge/Expo-000020?logo=expo&logoColor=white&style=for-the-badge) ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=black&style=for-the-badge) ![Jest](https://img.shields.io/badge/Jest-C21325?logo=jest&logoColor=white&style=for-the-badge) ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=for-the-badge) ![OpenWeather](https://img.shields.io/badge/OpenWeather-EB6E4B?style=for-the-badge) ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=githubactions&logoColor=white&style=for-the-badge)
 
-### Pré-requisitos
-Antes de começar, certifique-se de ter instalado em sua máquina:
-*   [Node.js](https://nodejs.org/) (versão LTS recomendada)
-*   [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/)
-*   Dispositivo móvel com o app [Expo Go](https://expo.dev/go) instalado ou um emulador (Android Studio / Xcode) configurado.
+## Como rodar
 
----
+Você precisa de [Node.js](https://nodejs.org/) (LTS), [Docker](https://www.docker.com/) e do app [Expo Go](https://expo.dev/go) no celular, ou de um emulador Android/iOS.
 
-### Passo 1: Subir os Serviços de Infraestrutura
-Os serviços de banco de dados (PostgreSQL) e armazenamento (MinIO) devem ser iniciados primeiro.
+### 1. Infraestrutura (PostgreSQL e MinIO)
 
-1. Navegue até a pasta `infra`:
-   ```bash
-   cd infra
-   ```
-2. Crie o arquivo de variáveis de ambiente a partir do exemplo:
-   ```bash
-   cp .env.example .env
-   ```
-   *(Abra o arquivo `.env` e configure as credenciais necessárias, como senhas e a chave da API OpenWeather).*
-3. Inicie os containers do banco de dados e do storage:
-   ```bash
-   docker compose up -d db minio
-   ```
+```bash
+cd infra
+cp .env.example .env   # senhas e chave da API do OpenWeather
+docker compose up -d db minio
+```
 
----
+### 2. Backend
 
-### Passo 2: Executar o Backend (NestJS)
-Com a infraestrutura rodando, agora configuramos e iniciamos o servidor backend.
+```bash
+cd backend
+cp .env.example .env   # use os mesmos valores do .env da infra
+npm install
+npx prisma migrate dev
+npm run start:dev
+```
 
-1. Em um novo terminal, navegue até a pasta `backend`:
-   ```bash
-   cd backend
-   ```
-2. Crie o arquivo de variáveis de ambiente:
-   ```bash
-   cp .env.example .env
-   ```
-   *(Certifique-se de preencher as variáveis do `.env` correspondentes aos valores configurados no `.env` da infraestrutura).*
-3. Instale as dependências:
-   ```bash
-   npm install
-   ```
-4. Execute as migrações do banco de dados para criar as tabelas:
-   ```bash
-   npx prisma migrate dev
-   ```
-5. Inicie o servidor em modo de desenvolvimento:
-   ```bash
-   npm run start:dev
-   ```
-6. O backend estará acessível em `http://localhost:3000`.
-   *   A documentação interativa das rotas (Swagger) estará disponível em: `http://localhost:3000/api/docs`
+A API sobe em `http://localhost:3000/v1`, e a documentação fica em `http://localhost:3000/api/docs`.
 
----
+### 3. App mobile
 
-### Passo 3: Executar o Aplicativo Mobile (Expo)
-Por fim, iniciamos o aplicativo no emulador ou celular físico.
+```bash
+cd mobile
+npm install
+npm run start
+```
 
-1. Em um novo terminal, navegue até a pasta `mobile`:
-   ```bash
-   cd mobile
-   ```
-2. Instale as dependências:
-   ```bash
-   npm install
-   ```
-3. Inicie o servidor de desenvolvimento do Expo:
-   ```bash
-   npm run start
-   ```
-4. Siga as instruções exibidas no terminal:
-   *   Pressione `a` para abrir no emulador Android.
-   *   Pressione `i` para abrir no simulador iOS (macOS).
-   *   Escaneie o QR Code exibido no terminal utilizando o aplicativo **Expo Go** no seu celular para testar diretamente em um dispositivo físico.
+Depois, aperte `a` para abrir no emulador Android, `i` para o simulador iOS, ou escaneie o QR Code com o Expo Go.
 
----
+No emulador Android o app já aponta para `10.0.2.2:3000`. Num celular físico, crie um `mobile/.env` com o IP da sua máquina:
 
-## 🛠️ Tecnologias Utilizadas
+```bash
+EXPO_PUBLIC_API_URL=http://192.168.0.10:3000/v1
+```
 
-*   **Backend:** Node.js, NestJS, TypeScript, Prisma ORM, Swagger, Jest.
-*   **Mobile (Frontend):** React Native, Expo, Expo Router, TypeScript.
-*   **Infraestrutura:** Docker, Docker Compose, PostgreSQL, MinIO (S3-compatible Object Storage).
-*   **Integrações:** API do OpenWeather (dados climáticos).
+### Testes
+
+```bash
+cd backend
+npm test           # unitários
+npm run test:e2e   # ponta a ponta
+```
+
+## Estrutura
+
+```
+infra/     Docker Compose com PostgreSQL e MinIO
+backend/   API REST em NestJS: auth, ocorrências, comentários, curtidas, upload e clima
+mobile/    app em React Native com Expo Router
+```
+
+O GitHub Actions roda lint, build e testes a cada push e pull request.
